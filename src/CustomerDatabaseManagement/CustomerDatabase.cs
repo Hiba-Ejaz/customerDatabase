@@ -1,4 +1,6 @@
 namespace CustomerDatabaseManagement;
+using System;
+using System.Collections.Generic;
 
 // Create CustomerDatabase class: This class should contain the data structure used 
 // to store customer information, such as a collection of customers. 
@@ -30,44 +32,58 @@ namespace CustomerDatabaseManagement;
              lastOperation="Add";
          }
         }
-        public bool ReadCustomer(Customer customer)
+        public void ReadCustomer(Customer customer)
         {
-         Customer readCustomer = customers.Find(c => c.Id == customer.Id);
+        Customer readCustomer = customers.Find(c => c.Id == customer.Id);
         if (readCustomer != null)
         {
          Console.WriteLine($"customer id {readCustomer.Id} has name {readCustomer.FirstName} {readCustomer.LastName} address {readCustomer.Address} email {readCustomer.Email}");
-        return true;
         }  
          else{
-        return false;
+            Console.WriteLine("Customer not found. Unable to read.");
+       // throw new InvalidOperationException("Customer not found. Unable to read.");
          }  
          
         }
          public void UpdateCustomer(Customer customer)
         {
         indexOfUpdatedCustomer=customers.FindIndex(c => c.Id == customer.Id);
-        if (indexOfUpdatedCustomer != null)
+        if (indexOfUpdatedCustomer >= 0)
         {
         customerStack.Push(customers[indexOfUpdatedCustomer]);   
         customers[indexOfUpdatedCustomer]=customer;    
         lastOperation="Update";
         }  
          else{
-       throw new InvalidOperationException("Customer not found. Unable to update.");
+             Console.WriteLine("Customer not found. Unable to update.");
+      // throw new InvalidOperationException("Customer not found. Unable to update.");
          }    
         }
          public void DeleteCustomer(Customer customer)
         {
-         Customer deleteCustomer = customers.Find(c => c.Id == customer.Id);
-         indexOfRemovedCustomer=customers.FindIndex(c => c.Id == customer.Id);
-        if (deleteCustomer != null)
+         int index = customers.FindIndex(c => c.Id == customer.Id);
+
+         if (index >= 0)
         {
-        customers.Remove(customer);
-        lastOperation="Delete";
-        }  
-        
+        Customer deletedCustomer = customers[index];
+        customers.RemoveAt(index);
+         customerStack.Push(deletedCustomer);
+        indexOfRemovedCustomer = index;
+        lastOperation = "Delete";
+        Console.WriteLine("Customer removed");
+         }
+        //     ///////
+        //  Customer deleteCustomer = customers.Find(c => c.Id == customer.Id);
+        //  indexOfRemovedCustomer=customers.FindIndex(c => c.Id == customer.Id);
+        // if (deleteCustomer != null)
+        // {
+        // customers.Remove(customer);
+        // Console.WriteLine("customeeer removed");
+        // lastOperation="Delete";
+        // }   
         else{
-         throw new InvalidOperationException("Customer not found. Unable to delete.");;
+            Console.WriteLine("Customer not found. Unable to delete.");
+       //  throw new InvalidOperationException("Customer not found. Unable to delete.");;
         }
         }
         public void SearchCustomerById(int id)
@@ -80,13 +96,17 @@ namespace CustomerDatabaseManagement;
     }
     public void Undo()
     {
+        Console.WriteLine("Undo-last operation done was "+lastOperation);
         if(lastOperation=="Add"){
             //customerStack.Push(customers[customers.Count-1]);
             customers.RemoveAt(customers.Count-1);
         }
         else if(lastOperation=="Delete"){
-            customerStack.Push(customers[indexOfRemovedCustomer]);
-             customers.Insert(indexOfRemovedCustomer, customerStack.Pop());
+           // customerStack.Push(customers[indexOfRemovedCustomer]);
+            Customer deletedCustomer=customerStack.Pop();
+            Console.WriteLine("index of removed Customer"+indexOfRemovedCustomer+"Deleted customer was ");
+            ReadCustomer(deletedCustomer);
+             customers.Insert(indexOfRemovedCustomer, deletedCustomer);
         }
         else if(lastOperation=="Update"){
             //customerStack.Push(customers[indexOfUpdatedCustomer]);
@@ -94,17 +114,13 @@ namespace CustomerDatabaseManagement;
             customers[indexOfUpdatedCustomer]=customerStack.Pop();
         }
     }       
-    
-    public void Redo()
+        public void Redo()
     {
+        Console.WriteLine("Redo-last operation done was "+lastOperation);
         if(lastOperation=="Add"){
             customers.Add(customerStack.Pop());
         }
         else if(lastOperation=="Delete"){
-            customers.RemoveAt(indexOfRemovedCustomer);
-            customerStack.Pop();
-        }
-               else if(lastOperation=="Delete"){
             customers.RemoveAt(indexOfRemovedCustomer);
             customerStack.Pop();
         }
