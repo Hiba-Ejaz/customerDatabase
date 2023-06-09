@@ -1,4 +1,4 @@
-namespace CustomerDatabase;
+namespace CustomerDatabaseManagement;
 // 1. Create `Customer` class: This class represents a 
 // customer and should contain properties such as Id, FirstName,
 //  LastName, Email, and Address. 
