@@ -1,4 +1,5 @@
 ﻿using CustomerDatabaseManagement;
+using src.Helper;
 internal class Program
 {
     private static void Main(string[] args)
@@ -46,7 +47,7 @@ internal class Program
                 Console.WriteLine("Customer updated successfully.");
                  customerDb.SearchCustomerById(2);
             }
-            catch (InvalidOperationException e)
+            catch (Exception e)
             {
                 Console.WriteLine("Error updating customer: " + e.Message);
             }
@@ -54,25 +55,42 @@ internal class Program
             {
                 customerDb.DeleteCustomer(customer1);
                 Console.WriteLine("Customer deleted successfully.");
+               // customerDb.DeleteCustomer(customer1);
             }
-            catch (InvalidOperationException e)
-            {
+            catch (Exception e)
+           {
                 Console.WriteLine("Error deleting customer: " + e.Message);
             }
             Console.WriteLine("trying to retrieve deleted customer");
             // customerDb.ReadCustomer(customer1);
 
         Console.WriteLine("Performing undo operation...");
+        try{
         customerDb.Undo();
+        }
+        catch (Exception e)
+            {
+                Console.WriteLine("Error deleting customer: " + e.Message);
+            }
         Console.WriteLine("After Undo:");
         Console.WriteLine("Result:");
         // customerDb.ReadCustomer(customer1);
         Console.WriteLine("Performing redo operation...");
+        try{
         customerDb.Redo();
+        }
+        catch(Exception e){
+            
+        }
         Console.WriteLine("After Redo:");
         Console.WriteLine("Result:");
         // customerDb.ReadCustomer(customer1);  
-        customerDb.WriteAllCustomers();    
+        try{
+        customerDb.WriteAllCustomers(); 
+        }
+        catch(Exception e){
+            throw ExceptionHandler.FetchDataException(e.Message);
+        }   
     }
     }
 

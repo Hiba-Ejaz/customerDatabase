@@ -11,9 +11,9 @@ namespace src.Helper;
       public static List<Customer> GetAllCustomers(){
         List<Customer> customers=new List<Customer>();
          try{
-            FileInfo fileInfo = new FileInfo("src/customers.csv");
-            using(StreamReader reader=fileInfo.OpenText()){
-                Console.WriteLine("data from file");
+            //FileInfo fileInfo = new FileInfo("src/customers.csv");
+          //  using(StreamReader reader=fileInfo.OpenText()){
+            using(StreamReader reader=new StreamReader("src/customers.csv")){
                 string line;
                 while((line=reader.ReadLine())!=null){
                 string[] customerArray=line.Split(",");
@@ -34,15 +34,16 @@ namespace src.Helper;
             }
             
          }  
-         catch{
-            Console.WriteLine("file not found");
+         catch(Exception e){
+            Console.WriteLine(ExceptionHandler.FetchDataException(e.Message));
          }
          return customers; 
       } 
      public static void WriteAllCustomers(List<Customer> customers){
             try{
-                FileInfo fileInfo = new FileInfo("src/customers.csv");
-                 using (StreamWriter writer = fileInfo.CreateText())
+                //FileInfo fileInfo = new FileInfo("src/customers.csv");
+                // using (StreamWriter writer = fileInfo.CreateText())
+                using(StreamWriter writer=new StreamWriter("src/customers.csv"))
                  {
                   foreach(Customer customer in customers){
                    string line = $"{customer.Id},{customer.FirstName},{customer.LastName},{customer.Email},{customer.Address}";
@@ -51,8 +52,8 @@ namespace src.Helper;
 
                 }
              }
-     catch{
-Console.WriteLine("file not found for writing data to");
-     } 
+        catch(Exception e){
+            Console.WriteLine(ExceptionHandler.UpdateDataException(e.Message));
+         }
     }
     }

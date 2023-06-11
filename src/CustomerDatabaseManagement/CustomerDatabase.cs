@@ -80,7 +80,7 @@ using src.Helper;
         {
          int index = customers.FindIndex(c => c.Id == customer.Id);
 
-         if (index >= 0)
+        if (index >= 0)
         {
         Customer deletedCustomer = customers[index];
         customers.RemoveAt(index);
@@ -89,7 +89,7 @@ using src.Helper;
         lastOperation = "Delete";
         Console.WriteLine("Customer removed");
          }
-        //     ///////
+        //     /////// Find didnot work in the above scenerio as it is refernce type
         //  Customer deleteCustomer = customers.Find(c => c.Id == customer.Id);
         //  indexOfRemovedCustomer=customers.FindIndex(c => c.Id == customer.Id);
         // if (deleteCustomer != null)
@@ -99,7 +99,7 @@ using src.Helper;
         // lastOperation="Delete";
         // }   
         else{
-            Console.WriteLine("Customer not found. Unable to delete.");
+           Console.WriteLine("Customer not found. Unable to delete.");
        //  throw new InvalidOperationException("Customer not found. Unable to delete.");;
         }
         }
