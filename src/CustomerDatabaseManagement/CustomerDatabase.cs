@@ -18,13 +18,21 @@ using src.Helper;
         }
 
         public void GetAllCustomers()
-        {
+        {   try{
             customers=FileHelper.GetAllCustomers();
+            }
+            catch(Exception e){
+                throw ExceptionHandler.FetchDataException(e.Message);
+            }
         }
 
         public void WriteAllCustomers()
-        {
+        {   try{
             FileHelper.WriteAllCustomers(customers);
+            }
+            catch(Exception e){
+            ExceptionHandler.UpdateDataException(e.Message);
+            }
         }
         List<Customer> customers=new List<Customer>();
         
@@ -37,102 +45,110 @@ using src.Helper;
         {
            bool emailExists = customers.Exists(c => c.Email == customer.Email);
              if (emailExists)
-         {
-        throw new InvalidOperationException("Customer with the same email already exists.");
+             {
+            throw new InvalidOperationException("Customer with the same email already exists.");
              }
           else
          {
              customers.Add(customer);
              customerStack.Push(customer);
-             lastOperation="Add";
-             
-             
+             lastOperation="Add";  
          }
         }
         public void ReadCustomer(Customer customer)
         {
         Customer readCustomer = customers.Find(c => c.Id == customer.Id);
-        if (readCustomer != null)
-        {
+        try{
          Console.WriteLine($"customer id {readCustomer.Id} has name {readCustomer.FirstName} {readCustomer.LastName} address {readCustomer.Address} email {readCustomer.Email}");
-        }  
-         else{
-            Console.WriteLine("Customer not found. Unable to read.");
-       // throw new InvalidOperationException("Customer not found. Unable to read.");
+        } 
+        catch(Exception e){
+        throw new NullReferenceException(e.Message);
          }  
          
         }
-         public void UpdateCustomer(Customer customer)
+        public void UpdateCustomer(Customer customer)
         {
         indexOfUpdatedCustomer=customers.FindIndex(c => c.Id == customer.Id);
+        try{
         if (indexOfUpdatedCustomer >= 0)
         {
         customerStack.Push(customers[indexOfUpdatedCustomer]);   
         customers[indexOfUpdatedCustomer]=customer;    
         lastOperation="Update";
-        }  
-         else{
-             Console.WriteLine("Customer not found. Unable to update.");
-      // throw new InvalidOperationException("Customer not found. Unable to update.");
-         }    
+        }     
         }
+        catch(Exception e){
+            throw ExceptionHandler.IndexNotFoundException(e.Message);
+        }}
          public void DeleteCustomer(Customer customer)
         {
          int index = customers.FindIndex(c => c.Id == customer.Id);
 
+        try{
         if (index >= 0)
+        {
+        try
         {
         Customer deletedCustomer = customers[index];
         customers.RemoveAt(index);
-         customerStack.Push(deletedCustomer);
+        customerStack.Push(deletedCustomer);
         indexOfRemovedCustomer = index;
         lastOperation = "Delete";
         Console.WriteLine("Customer removed");
-         }
-        //     /////// Find didnot work in the above scenerio as it is refernce type
-        //  Customer deleteCustomer = customers.Find(c => c.Id == customer.Id);
-        //  indexOfRemovedCustomer=customers.FindIndex(c => c.Id == customer.Id);
-        // if (deleteCustomer != null)
-        // {
-        // customers.Remove(customer);
-        // Console.WriteLine("customeeer removed");
-        // lastOperation="Delete";
-        // }   
-        else{
-           Console.WriteLine("Customer not found. Unable to delete.");
-       //  throw new InvalidOperationException("Customer not found. Unable to delete.");;
         }
+        catch(Exception e){
+        throw ExceptionHandler.DeleteCustomerException(e.Message);
+            }
+         }
+         }
+         catch(Exception e){
+            throw ExceptionHandler.IndexNotFoundException(e.Message);
+         }
+        ///////// Find didnot work in the above scenerio as it is refernce type
         }
         public void SearchCustomerById(int id)
         {
          Customer foundCustomer = customers.Find(c => c.Id == id);
+        try{
         if (foundCustomer != null)
+        try{
         {
                Console.WriteLine($"customer id {foundCustomer.Id} has name {foundCustomer.FirstName} {foundCustomer.LastName} address {foundCustomer.Address} email {foundCustomer.Email}");
+        }
+        }
+        catch(Exception e){
+            throw ExceptionHandler.IndexNotFoundException(e.Message);
+        }
+        }
+        catch(Exception e){
+            throw ExceptionHandler.NullReferenceException(e.Message);
         }
     }
     public void Undo()
     {
         Console.WriteLine("Undo-last operation done was "+lastOperation);
+        try{
         if(lastOperation=="Add"){
-            //customerStack.Push(customers[customers.Count-1]);
             customers.RemoveAt(customers.Count-1);
         }
         else if(lastOperation=="Delete"){
-           // customerStack.Push(customers[indexOfRemovedCustomer]);
             Customer deletedCustomer=customerStack.Pop();
             Console.WriteLine("index of removed Customer"+indexOfRemovedCustomer+"Deleted customer was ");
             ReadCustomer(deletedCustomer);
              customers.Insert(indexOfRemovedCustomer, deletedCustomer);
         }
         else if(lastOperation=="Update"){
-            //customerStack.Push(customers[indexOfUpdatedCustomer]);
             updatedCustomer=customers[indexOfUpdatedCustomer];
             customers[indexOfUpdatedCustomer]=customerStack.Pop();
+        }
+        }
+        catch(Exception e){
+            ExceptionHandler.InvalidOperationException(e.Message);
         }
     }       
         public void Redo()
     {
+        try{
         Console.WriteLine("Redo-last operation done was "+lastOperation);
         if(lastOperation=="Add"){
             customers.Add(customerStack.Pop());
@@ -144,6 +160,10 @@ using src.Helper;
         else if(lastOperation=="Update"){
             customerStack.Push(customers[indexOfUpdatedCustomer]);
             customers[indexOfUpdatedCustomer]=updatedCustomer;
+        }
+         }
+        catch(Exception e){
+            ExceptionHandler.InvalidOperationException(e.Message);
         }
     }
     }

@@ -49,17 +49,17 @@ internal class Program
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error updating customer: " + e.Message);
+               
             }
             try
             {
                 customerDb.DeleteCustomer(customer1);
                 Console.WriteLine("Customer deleted successfully.");
-               // customerDb.DeleteCustomer(customer1);
+                customerDb.DeleteCustomer(customer1);
             }
             catch (Exception e)
            {
-                Console.WriteLine("Error deleting customer: " + e.Message);
+               throw ExceptionHandler.DeleteCustomerException(e.Message);
             }
             Console.WriteLine("trying to retrieve deleted customer");
             // customerDb.ReadCustomer(customer1);
