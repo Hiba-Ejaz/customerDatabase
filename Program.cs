@@ -6,19 +6,19 @@ internal class Program
             CustomerDatabase customerDb = new CustomerDatabase();
             Customer customer1 = new Customer
             {
-                Id = 1,
-                FirstName = "John",
-                LastName = "Doe",
-                Email = "john@example.com",
-                Address = "123 Main St"
+                Id = 3,
+                FirstName = "Hiba",
+                LastName = "Ejaz",
+                Email = "hiba@example.com",
+                Address = "helsinki"
             };
             Customer customer2 = new Customer
             {
                 Id = 2,
-                FirstName = "Jane",
-                LastName = "Smith",
-                Email = "jane@example.com",
-                Address = "456 Elm St"
+                FirstName = "Faheem",
+                LastName = "Ijaz",
+                Email = "faheem@example.com",
+                Address = "Espoo"
             };
             try
             {
@@ -35,10 +35,10 @@ internal class Program
             Customer updatedCustomer = new Customer
             {
                 Id = 2,
-                FirstName = "Jane",
-                LastName = "Smith",
-                Email = "jane.smith@example.com",
-                Address = "456 Elm St, Apt 123"
+                FirstName = "Faheem",
+                LastName = "Ijaz",
+                Email = "faheem.ijaz@example.com",
+                Address = "456 xyz Helsinki"
             };
             try
             {
@@ -60,18 +60,19 @@ internal class Program
                 Console.WriteLine("Error deleting customer: " + e.Message);
             }
             Console.WriteLine("trying to retrieve deleted customer");
-            customerDb.ReadCustomer(customer1);
+            // customerDb.ReadCustomer(customer1);
 
         Console.WriteLine("Performing undo operation...");
         customerDb.Undo();
         Console.WriteLine("After Undo:");
         Console.WriteLine("Result:");
-        customerDb.ReadCustomer(customer1);
+        // customerDb.ReadCustomer(customer1);
         Console.WriteLine("Performing redo operation...");
         customerDb.Redo();
         Console.WriteLine("After Redo:");
         Console.WriteLine("Result:");
-        customerDb.ReadCustomer(customer1);      
+        // customerDb.ReadCustomer(customer1);  
+        customerDb.WriteAllCustomers();    
     }
     }
 

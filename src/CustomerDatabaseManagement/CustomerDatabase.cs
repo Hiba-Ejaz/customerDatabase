@@ -1,6 +1,7 @@
 namespace CustomerDatabaseManagement;
 using System;
 using System.Collections.Generic;
+using src.Helper;
 
 // Create CustomerDatabase class: This class should contain the data structure used 
 // to store customer information, such as a collection of customers. 
@@ -11,8 +12,22 @@ using System.Collections.Generic;
 // Implement an undo and redo feature which allows users to undo 
 // their last action or redo an action that they have undone
     public class CustomerDatabase
-    {
+    {        public CustomerDatabase()
+        {
+            GetAllCustomers();
+        }
+
+        public void GetAllCustomers()
+        {
+            customers=FileHelper.GetAllCustomers();
+        }
+
+        public void WriteAllCustomers()
+        {
+            FileHelper.WriteAllCustomers(customers);
+        }
         List<Customer> customers=new List<Customer>();
+        
         Stack<Customer> customerStack=new Stack<Customer>();
         private string lastOperation;
        private int indexOfRemovedCustomer;
@@ -30,6 +45,8 @@ using System.Collections.Generic;
              customers.Add(customer);
              customerStack.Push(customer);
              lastOperation="Add";
+             
+             
          }
         }
         public void ReadCustomer(Customer customer)
